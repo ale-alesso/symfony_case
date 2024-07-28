@@ -39,3 +39,8 @@ php bin/console messenger:consume async -vv
 ```bash
 php bin/phpunit
 ```
+
+## Develop
+
+### Swagger config
+See `openapi.yaml` to externally interact with API
