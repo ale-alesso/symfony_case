@@ -1,0 +1,11 @@
+{
+  "user": 1,
+  "totalAmount": 180.00,
+  "items": [
+    {
+      "productId": 1,
+      "quantity": 3,
+      "price": 60.00
+    }
+  ]
+}
