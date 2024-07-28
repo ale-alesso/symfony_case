@@ -59,4 +59,19 @@ class OrderService
 
         return $order;
     }
+
+    public function getOrdersByUser(int $userId)
+    {
+        return $this->orderRepository->findByUserId($userId);
+    }
+
+    public function getOrdersByDateRange(\DateTime $startDate, \DateTime $endDate)
+    {
+        return $this->orderRepository->findByDateRange($startDate, $endDate);
+    }
+
+    public function getOrdersByTotalAmount(float $amount)
+    {
+        return $this->orderRepository->findByTotalAmountGreaterThan($amount);
+    }
 }

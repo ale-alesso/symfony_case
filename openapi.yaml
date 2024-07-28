@@ -1,0 +1,249 @@
+openapi: 3.0.0
+info:
+  title: Symfony Application API
+  description: API for managing users, orders and products.
+  version: 1.0.0
+servers:
+  - url: http://127.0.0.1:8000
+
+paths:
+  /user/{email}:
+    get:
+      summary: Get user by email
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+          description: User email
+      responses:
+        '200':
+          description: User information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User is not found
+
+  /user/{userId}/orders:
+    get:
+      summary: Get user orders
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: User ID
+      responses:
+        '200':
+          description: User's Order List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '404':
+          description: User not found
+
+  /orders/date-range:
+    get:
+      summary: Get orders in date range
+      parameters:
+        - name: startDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: Start date
+        - name: endDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: End date
+      responses:
+        '200':
+          description: List of orders in date range
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+
+  /orders/amount-greater-than:
+    get:
+      summary: Receive orders with a sum greater than the specified one
+      parameters:
+        - name: amount
+          in: query
+          required: true
+          schema:
+            type: number
+            format: float
+          description: Minimum order amount
+      responses:
+        '200':
+          description: List of orders with an amount greater than the specified one
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+
+  /product/search:
+    get:
+      summary: Get products by name
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Product name
+      responses:
+        '200':
+          description: Product list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+
+  /product/price-range:
+    get:
+      summary: Get products in price range
+      parameters:
+        - name: min
+          in: query
+          required: true
+          schema:
+            type: number
+            format: float
+          description: Minimum price
+        - name: max
+          in: query
+          required: true
+          schema:
+            type: number
+            format: float
+          description: Maximum price
+      responses:
+        '200':
+          description: List of products in price range
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+
+  /order:
+    post:
+      summary: Create order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+      responses:
+        '201':
+          description: Order successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: Product not found
+        '400':
+          description: Request error
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        name:
+          type: string
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+        user:
+          $ref: '#/components/schemas/User'
+        totalAmount:
+          type: number
+          format: float
+        createdAt:
+          type: string
+          format: date-time
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+
+    OrderItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        product:
+          $ref: '#/components/schemas/Product'
+        quantity:
+          type: integer
+        price:
+          type: number
+          format: float
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: float
+
+    OrderRequest:
+      type: object
+      properties:
+        user:
+          type: integer
+        totalAmount:
+          type: number
+          format: float
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              productId:
+                type: integer
+              quantity:
+                type: integer
+              price:
+                type: number
+                format: float
