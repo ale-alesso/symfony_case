@@ -43,4 +43,4 @@ php bin/phpunit
 ## Develop
 
 ### Swagger config
-See `openapi.yaml` to externally interact with API
+See `./openapi.yaml` to externally interact with API
